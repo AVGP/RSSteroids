@@ -1,0 +1,46 @@
+<head>
+  <title>RSSteriods</title>
+  <link rel="stylesheet" href="css/foundation.min.css" />
+</head>
+
+<body>
+    <div class="row">{{loginButtons}}</div>
+    {{> main}}
+</body>
+
+<template name="main">
+    {{#if currentUser}}
+        <div class="row">
+            <h1>Welcome {{userFirstname}}</h1>
+        </div>
+      <div class="row">
+      <div class="small-3 columns">{{> feedList}}</div>
+      <div class="small-9 columns">{{> hello}}</div>
+      </div>
+    {{else}}
+        <p>Please login</p>
+    {{/if}}
+</template>
+
+<template name="feedList">
+    <h2>Feeds</h2>
+    <ul class="side-nav">
+      {{#each feeds}}
+        <li><a href="#">{{title}}</a></li>
+      {{/each}}
+    </ul>
+    
+    <label for="feedurl">URL:</label>
+    <input type="url" id="feedurl" />
+    <button id="addfeed">Add</button>
+</template>
+
+<template name="hello">
+    <h2>Articles</h2>
+    <button id="refresh">Refresh</button>
+    <ul class="small-12 columns">
+      {{#each articles}}
+        <li>{{title}}</li>
+      {{/each}}
+    </ul>
+</template>
