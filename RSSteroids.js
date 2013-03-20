@@ -2,6 +2,14 @@ var articles = new Meteor.Collection('articles');
 var feeds = new Meteor.Collection('feeds');
 
 if (Meteor.isClient) {
+  var refreshFeeds = function() {
+      Meteor.setTimeout(refreshFeeds, 300000);
+      Meteor.call("refreshFeeds");
+  };
+  
+  Meteor.startup(function() {
+      Meteor.setTimeout(refreshFeeds, 0);
+  });
       
   Meteor.Router.add({
     '/': function() {
