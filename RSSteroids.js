@@ -3,8 +3,8 @@ var feeds = new Meteor.Collection('feeds');
 
 if (Meteor.isClient) {
   var refreshFeeds = function() {
-      Meteor.setTimeout(refreshFeeds, 300000);
-      Meteor.call("refreshFeeds");
+      Meteor.setTimeout(refreshFeeds, 60000);
+      if(Meteor.user()) Meteor.call("refreshFeeds");
   };
   
   Meteor.startup(function() {
