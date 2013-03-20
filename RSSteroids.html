@@ -1,5 +1,5 @@
 <head>
-  <title>Neee.ws - Your newsreader</title>
+  <title>RSSteroids</title>
   <link rel="stylesheet" href="/css/foundation.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1">  
 </head>
@@ -21,7 +21,12 @@
           <div class="small-9 columns">{{renderPage}}</div>
       </div>
     {{else}}
-        <p>Please login</p>
+        <div class="row">
+            <h1>RSSteroids</h1>
+            <h2>The juicy Newsreader</h2>
+            <p>Getting started is easy & it's free!</p>
+        </div>
+        <div class="row">{{loginButtons}} to start!</div>
     {{/if}}
 </template>
 
