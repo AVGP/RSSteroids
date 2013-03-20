@@ -1,6 +1,7 @@
 <head>
   <title>RSSteriods</title>
-  <link rel="stylesheet" href="css/foundation.min.css" />
+  <link rel="stylesheet" href="/css/foundation.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">  
 </head>
 
 <body>
@@ -15,7 +16,7 @@
         </div>
       <div class="row">
       <div class="small-3 columns">{{> feedList}}</div>
-      <div class="small-9 columns">{{> hello}}</div>
+      <div class="small-9 columns">{{renderPage}}</div>
       </div>
     {{else}}
         <p>Please login</p>
@@ -25,8 +26,9 @@
 <template name="feedList">
     <h2>Feeds</h2>
     <ul class="side-nav">
+      <li><a href="/">All feeds</a></li>
       {{#each feeds}}
-        <li><a href="#">{{title}}</a></li>
+        <li><a href="/timeline/{{title}}">{{title}}</a></li>
       {{/each}}
     </ul>
     
@@ -35,12 +37,23 @@
     <button id="addfeed">Add</button>
 </template>
 
-<template name="hello">
+<template name="timeline">
     <h2>Articles</h2>
     <button id="refresh">Refresh</button>
     <ul class="small-12 columns">
       {{#each articles}}
-        <li>{{title}}</li>
+        <li><a href="/article/{{title}}">{{title}}</a></li>
       {{/each}}
     </ul>
+</template>
+
+<template name="article">
+    <h2><a href="{{content.link}}">{{content.title}}</a></h2>
+    <div class="row">
+        {{#if content.content}}
+            <div class="small-12 columns">{{{content.content}}}</div>
+        {{else}}
+            <div class="small-12 columns">{{{content.summary}}}</div>        
+        {{/if}}
+    </div>
 </template>

@@ -2,33 +2,85 @@ var articles = new Meteor.Collection('articles');
 var feeds = new Meteor.Collection('feeds');
 
 if (Meteor.isClient) {
-  Template.hello.articles = function () {
-      return articles.find({},{sort: [["date", "desc"]]}).fetch();
-  };
+      
+  Meteor.Router.add({
+    '/': function() {
+        Session.set('feedId', undefined);
+        return 'timeline'
+    },
+    '/timeline/:name': function(name) {
+        var feed = feeds.findOne({title: name, userId: Meteor.userId()});
+        if(!feed) return 'timeline';
+        Session.set('feedId', feed._id);
+        return 'timeline';
+    },
+    '/article/:title': function(title) {
+        var article = articles.findOne({title: title, userId: Meteor.userId()});
+//        if(!feed) return 'timeline'; //Go back to the overall timeline, b/c there's no article.
+        Session.set('article', article);
+        return 'article';        
+    }
+  });    
+  
+  /**
+  * Global main template
+  **/
 
-  Template.hello.userFirstname = function() {
-      return Meteor.user().profile.name.split(" ")[0];
+  Template.main.userFirstname = function() {
+      return Meteor.user().profile.name.split(' ')[0];
+  };  
+      
+  /**
+  * Overall timeline
+  **/
+  Template.timeline.articles = function () {
+      var selectors = { userId: Meteor.userId() };
+      if(Session.get('feedId')) {
+          selectors.feedId = Session.get('feedId');
+      }
+      return articles.find(selectors, {sort: [['date', 'desc']]}).fetch();
   };
+    
+  Template.timeline.events({
+      'click #refresh': function() {
+          Meteor.call('refreshFeeds');
+      }
+  });
   
+  /**
+  * The list of feeds (aside)
+  **/
+
   Template.feedList.feeds = function() {
-      return feeds.find().fetch();
+      return feeds.find({userId: Meteor.userId()}).fetch();
   }
-  
-  Template.hello.events({
-      "click #refresh": function() {
-          Meteor.call("refreshFeeds");
-      }
-  });
-  
+   
   Template.feedList.events({
-      "click button": function() {
-          Meteor.call("addFeed", $("#feedurl").val());
-          $("#feedurl").val("");
+      'click button': function() {
+          Meteor.call('addFeed', $('#feedurl').val());
+          $('#feedurl').val('');
       }
   });
+  
+  /**
+  * Detail for an article
+  **/
+  
+  Template.article.content = function() {
+      console.log(Session.get('article'));
+      return Session.get('article');
+  }
 }
 
+/**
+*
+* SERVER
+*
+**/
+
+
 if (Meteor.isServer) {
+  
   var require = __meteor_bootstrap__.require;    
   var feedparser = require('feedparser');
   
@@ -39,18 +91,21 @@ if (Meteor.isServer) {
         if(articles.findOne({feedId: feed._id, guid: article.guid})) return false;      
         articles.insert({
           feedId: feed._id,
+          userId: feed.userId,
           title: article.title, 
-          content: article.summary,
+          summary: article.summary,
+          content: article.description,
           guid: article.guid,
-          date: article.date
+          date: article.date,
+          link: article.link
         });
-        console.log("Found article '" + article.title + "'");
       }).run();
     };
   }
   
-  var refreshFeeds = function (userId) {
-      feeds.find({userId: userId}).forEach(refreshFeed);
+  var refreshFeeds = function () {
+      console.log('Refreshing for ' + this.userId);
+      feeds.find({userId: this.userId}).forEach(refreshFeed);
   }
   
   //Parses feed for newer articles
