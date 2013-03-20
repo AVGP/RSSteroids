@@ -10,7 +10,6 @@ body {
   font-size: 100%; }
 
 body {
-  background: white;
   color: #222222;
   padding: 0;
   margin: 0;
@@ -962,11 +961,11 @@ td {
 
 /* Default Link Styles */
 a {
-  color: #2ba6cb;
+  color: #2285A2; /*#2ba6cb;*/
   text-decoration: none;
   line-height: inherit; }
   a:hover, a:focus {
-    color: #2795b6; }
+    color: #2ba6cb; }
   a img {
     border: none; }
 
@@ -3359,10 +3358,8 @@ kbd {
     margin: 0 0 0.4375em 0;
     font-size: 0.875em; }
     .side-nav li a {
-      display: block;
-      color: #2ba6cb; }
+      display: block; }
     .side-nav li.active a {
-      color: #4d4d4d;
       font-weight: bold; }
     .side-nav li.divider {
       border-top: 1px solid;

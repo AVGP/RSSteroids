@@ -1,1 +1,28 @@
 /* CSS declarations go here */
+body {
+    background-image: url(/img/light.jpg);
+    background-attachment: fixed;
+    background-size: cover;
+}
+
+#login-buttons {
+    border: 1px #ccc solid;
+    border-radius: 5px;
+    padding: 2px;
+}
+
+.item {
+    padding-bottom: 3px;
+    border-bottom: #eee 1px dotted;
+}
+
+.item:hover {
+    background-color: rgba(230,240,255,0.5);
+}
+
+#wrap {
+    background: rgb(255,255,255);
+    background: rgba(255,255,255, 0.75);
+    padding: 2px 20px;
+    box-shadow: #ccc 0px 0px 6px 2px;
+}
