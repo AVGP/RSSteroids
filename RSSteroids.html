@@ -1,22 +1,24 @@
 <head>
   <title>RSSteriods</title>
-  <link rel="stylesheet" href="/css/foundation.min.css" />
+  <link rel="stylesheet" href="/css/foundation.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1">  
 </head>
 
 <body>
-    <div class="row">{{loginButtons}}</div>
-    {{> main}}
+    <div class="row">
+        <div class="small-8 columns small-offset-2" id="wrap">{{> main}}</div>
+    </div>
 </body>
 
 <template name="main">
     {{#if currentUser}}
-        <div class="row">
-            <h1>Welcome {{userFirstname}}</h1>
-        </div>
       <div class="row">
-      <div class="small-3 columns">{{> feedList}}</div>
-      <div class="small-9 columns">{{renderPage}}</div>
+          <div class="right">{{loginButtons}}</div>
+          <h1>Welcome {{userFirstname}}</h1>
+      </div>
+      <div class="row">
+          <div class="small-3 columns">{{> feedList}}</div>
+          <div class="small-9 columns">{{renderPage}}</div>
       </div>
     {{else}}
         <p>Please login</p>
@@ -32,17 +34,16 @@
       {{/each}}
     </ul>
     
-    <label for="feedurl">URL:</label>
-    <input type="url" id="feedurl" />
-    <button id="addfeed">Add</button>
+    <label for="feedurl">Add feed:</label>
+    <input type="url" id="feedurl" placeholder="http://" />
+    <button id="addfeed" class="button radius">Add</button>
 </template>
 
 <template name="timeline">
     <h2>Articles</h2>
-    <button id="refresh">Refresh</button>
-    <ul class="small-12 columns">
+    <ul class="small-12 columns no-bullet">
       {{#each articles}}
-        <li><a href="/article/{{title}}">{{title}}</a></li>
+        <li class="item"><a href="/article/{{title}}">{{title}}</a></li>
       {{/each}}
     </ul>
 </template>
