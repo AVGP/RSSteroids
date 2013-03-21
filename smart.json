@@ -1,9 +1,9 @@
 {
   "meteor": {
-    "branch": "release-0.5.9"
+    "git": "https://github.com/meteor/meteor.git",
+    "branch": "master"
   },
   "packages": {
-    "HTML5-History-API": {},
     "router": {}
   }
 }

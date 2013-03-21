@@ -1,20 +1,14 @@
 {
   "meteor": {
     "git": "https://github.com/meteor/meteor.git",
-    "branch": "release-0.5.9",
-    "commit": "45fef52095bb6726cc1b2f05008ad891c446100a"
+    "branch": "master",
+    "commit": "f07715dc70de16a7aab84e56ab0c6cbd9c1f9dc6"
   },
   "dependencies": {
     "basePackages": {
-      "HTML5-History-API": {},
       "router": {}
     },
     "packages": {
-      "HTML5-History-API": {
-        "git": "https://github.com/tmeasday/meteor-HTML5-History-API.git",
-        "tag": "v0.1.2",
-        "commit": "72333bfa71ae1ca75243085e83200eef40818088"
-      },
       "router": {
         "git": "https://github.com/tmeasday/meteor-router.git",
         "tag": "v0.4.3",
