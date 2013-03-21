@@ -2,9 +2,12 @@ var articles = new Meteor.Collection('articles');
 var feeds = new Meteor.Collection('feeds');
 
 if (Meteor.isClient) {
+//  Meteor.connect('http://neee.ws');
   var refreshFeeds = function() {
       Meteor.setTimeout(refreshFeeds, 60000);
-      if(Meteor.user()) Meteor.call("refreshFeeds");
+      if(Meteor.userId()) {
+          Meteor.call("refreshFeeds");
+      }
   };
   
   Meteor.startup(function() {
@@ -55,7 +58,7 @@ if (Meteor.isClient) {
       }
   });
   
-  /**
+    /**
   * The list of feeds (aside)
   **/
 
@@ -96,7 +99,9 @@ if (Meteor.isServer) {
     //This way we pass the feed into the callback
     return function(article) {
       Fiber(function() {
+        console.log("Article: " + article.title);
         if(articles.findOne({feedId: feed._id, guid: article.guid})) return false;      
+        console.log("Added");
         articles.insert({
           feedId: feed._id,
           userId: feed.userId,
