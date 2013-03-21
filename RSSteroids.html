@@ -1,5 +1,5 @@
 <head>
-  <title>RSSteroids</title>
+  <title>RSSteroids - Your newsreader</title>
   <link rel="stylesheet" href="/css/foundation.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1">  
 </head>
@@ -13,7 +13,10 @@
 <template name="main">
     {{#if currentUser}}
       <div class="row">
-          <div class="right">{{loginButtons}}</div>
+          <div class="right" id="topbar">
+              <input id="search" placeholder="search articles">
+              {{loginButtons}}
+          </div>
           <h1>Welcome {{userFirstname}}</h1>
       </div>
       <div class="row">
@@ -33,9 +36,9 @@
 <template name="feedList">
     <h2>Feeds</h2>
     <ul class="side-nav">
-      <li><a href="/">All feeds</a></li>
+      <li {{#if isCurrentFeed undefined}}class="active"{{/if}}><a href="/">All feeds</a></li>
       {{#each feeds}}
-        <li><a href="/timeline/{{title}}">{{title}}</a></li>
+        <li {{#if isCurrentFeed _id}}class="active"{{/if}}><a href="/timeline/{{title}}">{{title}}</a></li>
       {{/each}}
     </ul>
     
@@ -45,7 +48,7 @@
 </template>
 
 <template name="timeline">
-    <h2>Articles</h2>
+    <h2>Articles {{#if searchPhrase}}matching "{{searchPhrase}}"{{/if}}</h2>
     <ul class="small-12 columns no-bullet">
       {{#each articles}}
         <li class="item"><a href="/article/{{title}}">{{title}}</a></li>
