@@ -2,7 +2,7 @@ var articles = new Meteor.Collection('articles');
 var feeds = new Meteor.Collection('feeds');
 
 if (Meteor.isClient) {
-//  Meteor.connect('http://neee.ws');
+  Meteor.connect('http://neee.ws');
   var refreshFeeds = function() {
       Meteor.setTimeout(refreshFeeds, 60000);
       if(Meteor.userId()) {
@@ -40,17 +40,31 @@ if (Meteor.isClient) {
   Template.main.userFirstname = function() {
       return Meteor.user().profile.name.split(' ')[0];
   };  
-      
+
+  Template.main.events({
+      'keyup #search': function() {
+          Session.set('searchPhrase', $('#search').val());
+      }
+  });
   /**
   * Overall timeline
   **/
   Template.timeline.articles = function () {
       var selectors = { userId: Meteor.userId() };
-      if(Session.get('feedId')) {
-          selectors.feedId = Session.get('feedId');
+      if(Session.get('feedId')) { selectors.feedId = Session.get('feedId'); }
+      if(Session.get('searchPhrase')) {
+          var looseMatching = new RegExp('.*' + Session.get('searchPhrase') + '.*', 'ig');
+          selectors['$or'] = [
+              { title: looseMatching },
+              { content: looseMatching },
+              { summary: looseMatching }
+          ];
       }
+      console.log(selectors);
       return articles.find(selectors, {sort: [['date', 'desc']]}).fetch();
   };
+    
+  Template.timeline.searchPhrase = function() { return Session.get('searchPhrase'); };
     
   Template.timeline.events({
       'click #refresh': function() {
@@ -65,7 +79,8 @@ if (Meteor.isClient) {
   Template.feedList.feeds = function() {
       return feeds.find({userId: Meteor.userId()}).fetch();
   }
-   
+
+  Template.feedList.isCurrentFeed = function(id) { return Session.get('feedId') === id; };
   Template.feedList.events({
       'click button': function() {
           Meteor.call('addFeed', $('#feedurl').val());
