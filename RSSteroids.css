@@ -16,7 +16,7 @@ body {
     border-bottom: #eee 1px dotted;
 }
 
-.item:hover, .item.active {
+.item:hover, li.active {
     background-color: rgba(230,240,255,0.5);
 }
 
