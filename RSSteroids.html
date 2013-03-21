@@ -38,7 +38,7 @@
     <ul class="side-nav">
       <li {{#if isCurrentFeed undefined}}class="active"{{/if}}><a href="/">All feeds</a></li>
       {{#each feeds}}
-        <li {{#if isCurrentFeed _id}}class="active"{{/if}}><a href="/timeline/{{title}}">{{title}}</a></li>
+        <li {{#if isCurrentFeed _id}}class="active"{{/if}}><a href="/timeline/{{title}}">{{title}} ({{unreadCount}})</a></li>
       {{/each}}
     </ul>
     
@@ -49,9 +49,10 @@
 
 <template name="timeline">
     <h2>Articles {{#if searchPhrase}}matching "{{searchPhrase}}"{{/if}}</h2>
+    <button class="button radius" id="markAllRead">Mark all as read</button>
     <ul class="small-12 columns no-bullet">
       {{#each articles}}
-        <li class="item"><a href="/article/{{title}}">{{title}}</a></li>
+<li class="item{{#unless read}} unread{{/unless}}"><a href="/article/{{title}}">{{title}}</a></li>
       {{/each}}
     </ul>
 </template>
