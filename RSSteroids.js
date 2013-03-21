@@ -26,7 +26,9 @@ if (Meteor.isClient) {
         return 'timeline';
     },
     '/article/:title': function(title) {
+        console.log(Meteor.userId());
         var article = articles.findOne({title: title, userId: Meteor.userId()});
+        articles.update({_id: article._id}, {'$set': {read: true}});
 //        if(!feed) return 'timeline'; //Go back to the overall timeline, b/c there's no article.
         Session.set('article', article);
         return 'article';        
@@ -44,7 +46,7 @@ if (Meteor.isClient) {
   Template.main.events({
       'keyup #search': function() {
           Session.set('searchPhrase', $('#search').val());
-      }
+      }      
   });
   /**
   * Overall timeline
@@ -60,15 +62,14 @@ if (Meteor.isClient) {
               { summary: looseMatching }
           ];
       }
-      console.log(selectors);
       return articles.find(selectors, {sort: [['date', 'desc']]}).fetch();
   };
     
   Template.timeline.searchPhrase = function() { return Session.get('searchPhrase'); };
     
   Template.timeline.events({
-      'click #refresh': function() {
-          Meteor.call('refreshFeeds');
+      'click #markAllRead': function() {
+          Meteor.call('markAllRead', Session.get('feedId'));
       }
   });
   
@@ -77,7 +78,22 @@ if (Meteor.isClient) {
   **/
 
   Template.feedList.feeds = function() {
-      return feeds.find({userId: Meteor.userId()}).fetch();
+      return feeds.find({userId: Meteor.userId()}).map(function(f) {
+        f.unreadCount = articles.find({feedId: f._id, read: {$ne: true}}).count();
+        return f;
+      });
+  }
+  
+  Template.feedList.unreadCounts = function() {
+    var unreadCountsArr = feeds.find({userId: Meteor.userId()}).map(function(f) {
+        return {
+            feedId: f._id,
+            count: articles.find({feedId: f._id, read: false}).count()
+        }; 
+    });
+    var unreadCounts = {};
+    for(var i=0;i<unreadCountsArr.length;i++) unreadCounts[unreadCountsArr[i].feedId] = unreadCountsArr[i].count;
+    return unreadCounts;
   }
 
   Template.feedList.isCurrentFeed = function(id) { return Session.get('feedId') === id; };
@@ -123,7 +139,8 @@ if (Meteor.isServer) {
           content: article.description,
           guid: article.guid,
           date: article.date,
-          link: article.link
+          link: article.link,
+          read: false,
         });
       }).run();
     };
@@ -161,6 +178,11 @@ if (Meteor.isServer) {
       'refreshFeeds': refreshFeeds,
       'addFeed': function(url) {
           feedparser.parseUrl(url).on('meta', addFeed(this.userId, url));
+      },
+      'markAllRead': function(feedId) {
+          var selector = { read: {$ne: true} };
+          if(feedId) { selector.feedId = feedId; }
+          articles.update(selector, {$set: {read: true}}, {multi: true});
       }
   });
   
