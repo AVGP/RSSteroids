@@ -30,7 +30,15 @@
             <h2>The juicy Newsreader</h2>
             <p>Getting started is easy & it's free!</p>
         </div>
-        <div class="row">{{loginButtons}} to start & import your Google Reader subscriptions with one click!</div>
+        <div class="row">
+            <p class="text-center">{{loginButtons}}</p>
+            <p>to start & import your Google Reader subscriptions with one click!</p>
+        </div>
+        <div class="row text-center">
+            <a href="http://flattr.com/thing/1197278/Neeews" target="_blank">
+                <img src="http://api.flattr.com/button/flattr-badge-large.png" alt="Flattr this" title="Flattr this" border="0" />
+            </a>
+        </div>
     {{/if}}
 </template>
 
@@ -52,6 +60,9 @@
     <label for="feedurl">Add feed:</label>
     <input type="url" id="feedurl" placeholder="http://" />
     <button id="addFeed" class="button radius">Add</button>
+    <p>
+        <a href="http://flattr.com/thing/1197278/Neeews" target="_blank"><img src="http://api.flattr.com/button/flattr-badge-large.png" alt="Flattr this" title="Flattr this" border="0" /></a>
+    </p>
 </template>
 
 <template name="timeline">
@@ -59,11 +70,21 @@
     <div class="row">
         <button class="button radius" id="markAllRead">Mark all as read</button>
     </div>
-    <ul class="small-12 columns no-bullet">
-      {{#each articles}}
-        <li class="item{{#unless read}} unread{{/unless}}"><a href="/article/{{title}}">{{title}}</a></li>
-      {{/each}}
-    </ul>
+    <div class="row">
+        <ul class="small-12 columns no-bullet">
+          {{#each articles}}
+            <li class="item{{#unless read}} unread{{/unless}}"><a href="/article/{{title}}">{{title}}</a></li>
+          {{/each}}
+        </ul>
+    </div>
+    <div class="row">
+        <div class="small-6 columns small-centered text-center">
+            {{#if page}}
+                <a href="javascript:void(0);" id="prevPage"><span class="fontawesome-double-angle-left"></span> Newer</a> |
+            {{/if}}
+            <a href="javascript:void(0);" id="nextPage">Older <span class="fontawesome-double-angle-right"></span></a>
+        </div>
+    </div>
 </template>
 
 <template name="article">
