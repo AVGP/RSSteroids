@@ -1,6 +1,8 @@
 var articles = new Meteor.Collection('articles');
 var feeds = new Meteor.Collection('feeds');
 
+var ARTICLES_PER_PAGE = 50;
+
 if (Meteor.isClient) {
   Accounts.ui.config({
       requestPermissions: {
@@ -10,7 +12,7 @@ if (Meteor.isClient) {
   
   Meteor.connect('http://neee.ws');
   var refreshFeeds = function() {
-      Meteor.setTimeout(refreshFeeds, 60000);
+      Meteor.setTimeout(refreshFeeds, 300000);
       if(Meteor.userId()) {
           Meteor.call("refreshFeeds");
       }
@@ -23,6 +25,7 @@ if (Meteor.isClient) {
   Meteor.Router.add({
     '/': function() {
         Session.set('feedId', undefined);
+        Session.set('page',0);
         return 'timeline'
     },
     '/timeline/:name': function(name) {
@@ -32,7 +35,6 @@ if (Meteor.isClient) {
         return 'timeline';
     },
     '/article/:title': function(title) {
-        console.log(Meteor.userId());
         var article = articles.findOne({title: title, userId: Meteor.userId()});
         articles.update({_id: article._id}, {'$set': {read: true}});
 //        if(!feed) return 'timeline'; //Go back to the overall timeline, b/c there's no article.
@@ -59,6 +61,11 @@ if (Meteor.isClient) {
   **/
   Template.timeline.articles = function () {
       var selectors = { userId: Meteor.userId() };
+      var options = {
+          sort: [['date', 'desc'], ['_id', 'desc']],
+          limit: ARTICLES_PER_PAGE,
+          skip: (Session.get('page') || 0) * ARTICLES_PER_PAGE
+      };
       if(Session.get('feedId')) { selectors.feedId = Session.get('feedId'); }
       if(Session.get('searchPhrase')) {
           var looseMatching = new RegExp('.*' + Session.get('searchPhrase') + '.*', 'ig');
@@ -68,15 +75,23 @@ if (Meteor.isClient) {
               { summary: looseMatching }
           ];
       }
-      return articles.find(selectors, {sort: [['date', 'desc']]}).fetch();
+      return articles.find(selectors, options).fetch();
   };
     
+  Template.timeline.page = function() { return Session.get('page'); };
   Template.timeline.searchPhrase = function() { return Session.get('searchPhrase'); };
     
   Template.timeline.events({
       'click #markAllRead': function() {
           Meteor.call('markAllRead', Session.get('feedId'));
+      },
+      'click #nextPage': function() {
+          Session.set('page', (Session.get('page') || 0) + 1);
+      },
+      'click #prevPage': function() {
+          Session.set('page', Math.max(Session.get('page')-1, 0));
       }
+      
   });
   
     /**
@@ -115,7 +130,8 @@ if (Meteor.isClient) {
           var feedId = $(event.target.parentElement).attr('id');
           var feedTitle = feeds.findOne({_id: feedId}).title;
           if(window.confirm("Really delete " + feedTitle + "?")) {
-              feeds.remove({_id: feedId});
+              feeds.remove({_id: feedId, userId: Meteor.userId()});
+              articles.remove({feedId: feedId, userId: Metoer.userId()});
           }
       }
   });
@@ -125,7 +141,6 @@ if (Meteor.isClient) {
   **/
   
   Template.article.content = function() {
-      console.log(Session.get('article'));
       return Session.get('article');
   }
 }
@@ -163,7 +178,6 @@ if (Meteor.isServer) {
   }
   
   var refreshFeeds = function () {
-      console.log('Refreshing for ' + this.userId);
       feeds.find({userId: this.userId}).forEach(refreshFeed);
   }
   
