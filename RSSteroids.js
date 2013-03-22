@@ -62,7 +62,7 @@ if (Meteor.isClient) {
   Template.timeline.articles = function () {
       var selectors = { userId: Meteor.userId() };
       var options = {
-          sort: [['date', 'desc'], ['_id', 'desc']],
+          sort: [['date', 'desc'], ['_id', 'desc'], ['read', 'desc']],
           limit: ARTICLES_PER_PAGE,
           skip: (Session.get('page') || 0) * ARTICLES_PER_PAGE
       };
