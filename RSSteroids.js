@@ -2,6 +2,12 @@ var articles = new Meteor.Collection('articles');
 var feeds = new Meteor.Collection('feeds');
 
 if (Meteor.isClient) {
+  Accounts.ui.config({
+      requestPermissions: {
+          google: ['http://www.google.com/reader/api']
+      }
+  });
+  
   Meteor.connect('http://neee.ws');
   var refreshFeeds = function() {
       Meteor.setTimeout(refreshFeeds, 60000);
@@ -98,9 +104,19 @@ if (Meteor.isClient) {
 
   Template.feedList.isCurrentFeed = function(id) { return Session.get('feedId') === id; };
   Template.feedList.events({
-      'click button': function() {
+      'click #googleImport': function() {
+          Meteor.call('importFromGoogleReader');  
+      },
+      'click #addFeed': function() {
           Meteor.call('addFeed', $('#feedurl').val());
           $('#feedurl').val('');
+      },
+      'click .delete': function(event) {
+          var feedId = $(event.target.parentElement).attr('id');
+          var feedTitle = feeds.findOne({_id: feedId}).title;
+          if(window.confirm("Really delete " + feedTitle + "?")) {
+              feeds.remove({_id: feedId});
+          }
       }
   });
   
@@ -153,11 +169,13 @@ if (Meteor.isServer) {
   
   //Parses feed for newer articles
   var refreshFeed = function(feed) {
-      feedparser.parseUrl(feed.url).on('article', addArticle(feed));
+      feedparser.parseUrl(feed.url).on('article', addArticle(feed))
+          .on('error', function(error) { console.log("ERROR refreshing feed " + feed.url + ":" + error); });
   };
     
   //Called when metadata in a newly added feed is processed, gives information needed to add a new feed
   var addFeed = function(userId, url) {
+    console.log("Add for URL: " + url + " UserID: " + userId);
     //This way we pass the url into the callback as well
     return function(meta) {
         Fiber(function() {
@@ -179,10 +197,23 @@ if (Meteor.isServer) {
       'addFeed': function(url) {
           feedparser.parseUrl(url).on('meta', addFeed(this.userId, url));
       },
-      'markAllRead': function(feedId) {
-          var selector = { read: {$ne: true} };
+      'markAllRead': function(feedId) {              
+          var selector = { read: {$ne: true}, userId: Meteor.userId() };
           if(feedId) { selector.feedId = feedId; }
           articles.update(selector, {$set: {read: true}}, {multi: true});
+      },
+      'importFromGoogleReader': function() {
+          var accessToken = Meteor.user().services.google.accessToken;
+          var userId = Meteor.userId();
+          Meteor.http.get("https://www.google.com/reader/api/0/subscription/list?output=json",
+              { headers: { Authorization: "Bearer " + accessToken } }, 
+              function(err, result) {
+                  for(var i=0;i<result.data.subscriptions.length; i++) {
+                      var url = result.data.subscriptions[i].id.slice(5);
+                      console.log(url);
+                      addFeed(userId, url)(result.data.subscriptions[i]);     
+                  }     
+          });      
       }
   });
   

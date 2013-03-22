@@ -1,4 +1,8 @@
-/* CSS declarations go here */
+
+[class*="fontawesome-"]:before {
+  font-family: 'FontAwesome', sans-serif;
+}
+
 body {
     background-image: url(/img/light.jpg);
     background-attachment: fixed;
@@ -21,6 +25,9 @@ body {
 .item:hover, li.active {
     background-color: rgba(230,240,255,0.5);
 }
+
+.side-nav li a.delete { display: none; }
+.side-nav li:hover a.delete { display:inline !important; float:right; }
 
 #wrap {
     background: rgb(255,255,255);

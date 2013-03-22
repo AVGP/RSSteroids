@@ -1,7 +1,8 @@
 <head>
   <title>RSSteroids - Your newsreader</title>
+  <link rel="stylesheet" href="http://weloveiconfonts.com/api/?family=fontawesome" type="text/css" />
   <link rel="stylesheet" href="/css/foundation.css" />
-  <meta name="viewport" content="width=device-width, initial-scale=1">  
+  <meta name="viewport" content="width=device-width, initial-scale=1" />  
 </head>
 
 <body>
@@ -20,39 +21,47 @@
           <h1>Welcome {{userFirstname}}</h1>
       </div>
       <div class="row">
-          <div class="small-3 columns">{{> feedList}}</div>
-          <div class="small-9 columns">{{renderPage}}</div>
+          <div class="small-4 columns">{{> feedList}}</div>
+          <div class="small-8 columns">{{renderPage}}</div>
       </div>
     {{else}}
         <div class="row">
-            <h1>RSSteroids</h1>
-            <h2>The juicy Newsreader</h2>
+            <h1>Neee.ws</h1>
+            <h2>The juicy RSSteroids</h2>
             <p>Getting started is easy & it's free!</p>
         </div>
-        <div class="row">{{loginButtons}} to start!</div>
+        <div class="row">{{loginButtons}} to start & import your Google Reader subscriptions with one click!</div>
     {{/if}}
 </template>
 
 <template name="feedList">
     <h2>Feeds</h2>
+    {{#unless feeds.length}}
+        <button id="googleImport" class="button radius">Import from Google Reader</button>
+    {{/unless}}
     <ul class="side-nav">
       <li {{#if isCurrentFeed undefined}}class="active"{{/if}}><a href="/">All feeds</a></li>
       {{#each feeds}}
-        <li {{#if isCurrentFeed _id}}class="active"{{/if}}><a href="/timeline/{{title}}">{{title}} ({{unreadCount}})</a></li>
+        <li {{#if isCurrentFeed _id}}class="active"{{/if}}>
+            <a href="javascript:void(0)" id="{{_id}}" class="delete"><span class="fontawesome-trash"></span></a>
+            <a href="/timeline/{{title}}">{{title}} ({{unreadCount}})</a>
+        </li>
       {{/each}}
     </ul>
     
     <label for="feedurl">Add feed:</label>
     <input type="url" id="feedurl" placeholder="http://" />
-    <button id="addfeed" class="button radius">Add</button>
+    <button id="addFeed" class="button radius">Add</button>
 </template>
 
 <template name="timeline">
     <h2>Articles {{#if searchPhrase}}matching "{{searchPhrase}}"{{/if}}</h2>
-    <button class="button radius" id="markAllRead">Mark all as read</button>
+    <div class="row">
+        <button class="button radius" id="markAllRead">Mark all as read</button>
+    </div>
     <ul class="small-12 columns no-bullet">
       {{#each articles}}
-<li class="item{{#unless read}} unread{{/unless}}"><a href="/article/{{title}}">{{title}}</a></li>
+        <li class="item{{#unless read}} unread{{/unless}}"><a href="/article/{{title}}">{{title}}</a></li>
       {{/each}}
     </ul>
 </template>
