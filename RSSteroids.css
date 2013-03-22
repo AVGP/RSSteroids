@@ -16,8 +16,8 @@ body {
 }
 
 .item {
-    padding-bottom: 3px;
-    border-bottom: #eee 1px dotted;
+    padding-bottom: 8px;
+    border-bottom: rgb(162, 215, 236) 1px dotted;
 }
 
 .unread { font-weight: bold; }
