@@ -35,7 +35,8 @@ if (Meteor.isClient) {
         return 'timeline';
     },
     '/article/:title': function(title) {
-        var article = articles.findOne({title: title, userId: Meteor.userId()});
+        console.log(title);
+        var article = articles.findOne({title: decodeURIComponent(title), userId: Meteor.userId()});
         articles.update({_id: article._id}, {'$set': {read: true}});
 //        if(!feed) return 'timeline'; //Go back to the overall timeline, b/c there's no article.
         Session.set('article', article);
@@ -75,7 +76,10 @@ if (Meteor.isClient) {
               { summary: looseMatching }
           ];
       }
-      return articles.find(selectors, options).fetch();
+      return articles.find(selectors, options).map(function(article) {
+          article.slug = encodeURIComponent(article.title);
+          return article;
+      });
   };
     
   Template.timeline.page = function() { return Session.get('page'); };
