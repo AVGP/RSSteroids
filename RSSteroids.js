@@ -1,27 +1,6 @@
-var articles = new Meteor.Collection('articles');
-var feeds = new Meteor.Collection('feeds');
-
-var ARTICLES_PER_PAGE = 50;
-
-if (Meteor.isClient) {
-  Accounts.ui.config({
-      requestPermissions: {
-          google: ['http://www.google.com/reader/api']
-      }
-  });
-  
-  Meteor.connect('http://neee.ws');
-  var refreshFeeds = function() {
-      Meteor.setTimeout(refreshFeeds, 300000);
-      if(Meteor.userId()) {
-          Meteor.call("refreshFeeds");
-      }
-  };
-  
-  Meteor.startup(function() {
-      Meteor.setTimeout(refreshFeeds, 0);
-  });
-      
+if (Meteor.isClient) {  
+//  Meteor.connect('http://neee.ws');
+        
   Meteor.Router.add({
     '/': function() {
         Session.set('feedId', undefined);
@@ -43,7 +22,39 @@ if (Meteor.isClient) {
         return 'article';        
     }
   });    
+
+  Deps.autorun(function() {
+      console.log(Session.get('feedId'));
+      Meteor.subscribe('articles', {
+          feedId: Session.get('feedId'),
+          page: Session.get('page'),
+          searchPhrase: Session.get('searchPhrase')
+      });
+  });
   
+  Deps.autorun(function() {
+      Meteor.subscribe('feeds');
+  });
+  
+  var articles = new Meteor.Collection("articles");
+  var feeds = new Meteor.Collection("feeds");
+  
+  var refreshFeeds = function() {
+      Meteor.setTimeout(refreshFeeds, 300000);
+      if(Meteor.userId()) {
+          Meteor.call("refreshFeeds");
+      }
+  };
+  
+  Meteor.startup(function() {
+      Meteor.setTimeout(refreshFeeds, 0);
+      Accounts.ui.config({
+          requestPermissions: {
+              google: ['http://www.google.com/reader/api']
+          }
+      });
+  });
+      
   /**
   * Global main template
   **/
@@ -61,22 +72,7 @@ if (Meteor.isClient) {
   * Overall timeline
   **/
   Template.timeline.articles = function () {
-      var selectors = { userId: Meteor.userId() };
-      var options = {
-          sort: [['date', 'desc'], ['_id', 'desc'], ['read', 'desc']],
-          limit: ARTICLES_PER_PAGE,
-          skip: (Session.get('page') || 0) * ARTICLES_PER_PAGE
-      };
-      if(Session.get('feedId')) { selectors.feedId = Session.get('feedId'); }
-      if(Session.get('searchPhrase')) {
-          var looseMatching = new RegExp('.*' + Session.get('searchPhrase') + '.*', 'ig');
-          selectors['$or'] = [
-              { title: looseMatching },
-              { content: looseMatching },
-              { summary: looseMatching }
-          ];
-      }
-      return articles.find(selectors, options).map(function(article) {
+      return articles.find().map(function(article) {
           article.slug = encodeURIComponent(article.title);
           return article;
       });
@@ -98,29 +94,17 @@ if (Meteor.isClient) {
       
   });
   
-    /**
+  /**
   * The list of feeds (aside)
   **/
 
   Template.feedList.feeds = function() {
-      return feeds.find({userId: Meteor.userId()}).map(function(f) {
-        f.unreadCount = articles.find({feedId: f._id, read: {$ne: true}}).count();
-        return f;
+      return feeds.find().map(function(feed) {
+          feed.unreadCount = articles.find({feedId: feed._id, read: {$ne: true}}).count();
+          return feed;
       });
   }
   
-  Template.feedList.unreadCounts = function() {
-    var unreadCountsArr = feeds.find({userId: Meteor.userId()}).map(function(f) {
-        return {
-            feedId: f._id,
-            count: articles.find({feedId: f._id, read: false}).count()
-        }; 
-    });
-    var unreadCounts = {};
-    for(var i=0;i<unreadCountsArr.length;i++) unreadCounts[unreadCountsArr[i].feedId] = unreadCountsArr[i].count;
-    return unreadCounts;
-  }
-
   Template.feedList.isCurrentFeed = function(id) { return Session.get('feedId') === id; };
   Template.feedList.events({
       'click #googleImport': function() {
@@ -158,6 +142,35 @@ if (Meteor.isClient) {
 
 if (Meteor.isServer) {
   
+  var articles = new Meteor.Collection('articles');
+  var feeds = new Meteor.Collection('feeds');
+
+  var ARTICLES_PER_PAGE = 50;
+  
+  Meteor.publish('articles', function(params) {
+      var selectors = { userId: this.userId };
+      var options = {
+          sort: [['read', 'asc'], ['date', 'desc']],
+          limit: ARTICLES_PER_PAGE,
+          skip: (params.page || 0) * ARTICLES_PER_PAGE,
+          fields: {title: 1, read: 1, feedId: 1}
+      };
+      if(params.feedId) { selectors.feedId = params.feedId; }
+      if(params.searchPhrase) {
+          var looseMatching = new RegExp('.*' + params.searchPhrase + '.*', 'ig');
+          selectors['$or'] = [
+              { title: looseMatching },
+              { content: looseMatching },
+              { summary: looseMatching }
+          ];
+      }
+      return articles.find(selectors, options);  
+  });
+    
+  Meteor.publish('feeds', function() {
+      return feeds.find({userId: this.userId}, {fields: {feedId: 1, title: 1}});
+  });
+  
   var require = __meteor_bootstrap__.require;    
   var feedparser = require('feedparser');
   
@@ -182,7 +195,7 @@ if (Meteor.isServer) {
   }
   
   var refreshFeeds = function () {
-      feeds.find({userId: this.userId}).forEach(refreshFeed);
+//      feeds.find({userId: this.userId}).forEach(refreshFeed);
   }
   
   //Parses feed for newer articles
