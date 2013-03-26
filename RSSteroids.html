@@ -52,7 +52,7 @@
       {{#each feeds}}
         <li {{#if isCurrentFeed _id}}class="active"{{/if}}>
             <a href="javascript:void(0)" id="{{_id}}" class="delete"><span class="fontawesome-trash"></span></a>
-            <a href="/timeline/{{title}}">{{title}} ({{unreadCount}})</a>
+            <a href="/timeline/{{title}}">{{title}} ({{unreadCount _id}})</a>
         </li>
       {{/each}}
     </ul>

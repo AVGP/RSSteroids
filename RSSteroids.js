@@ -2,7 +2,6 @@ if (Meteor.isClient) {
 //  Meteor.connect('http://neee.ws');
         
   Deps.autorun(function() {
-      console.log(Session.get('feedId'));
       Meteor.subscribe('articles', {
           feedId: Session.get('feedId'),
           page: Session.get('page'),
@@ -14,8 +13,13 @@ if (Meteor.isClient) {
       Meteor.subscribe('feeds');
   });
   
-  var articles = new Meteor.Collection("articles");
-  var feeds = new Meteor.Collection("feeds");        
+  Deps.autorun(function() {
+      Meteor.subscribe('unreadCounts');
+  });
+    
+  var articles = new Meteor.Collection('articles');
+  var feeds = new Meteor.Collection('feeds');      
+  var unreadCounts = new Meteor.Collection('unreadCounts');
         
   Meteor.Router.add({
     '/': function() {
@@ -31,7 +35,7 @@ if (Meteor.isClient) {
         return 'timeline';
     },
     '/article/:title': function(title) {
-        console.log(title);
+        //console.log(title);
         var article = articles.findOne({title: decodeURIComponent(title)});
         articles.update({_id: article._id}, {'$set': {read: true}});
 //        if(!feed) return 'timeline'; //Go back to the overall timeline, b/c there's no article.
@@ -101,11 +105,12 @@ if (Meteor.isClient) {
 
   Template.feedList.feeds = function() {
       return feeds.find().map(function(feed) {
-          feed.unreadCount = articles.find({feedId: feed._id, read: {$ne: true}}).count();
+          var unreadCount = unreadCounts.findOne({feedId: feed._id});
+          feed.unreadCount = (unreadCount ? unreadCount.count : 'n/a');
           return feed;
       });
   }
-  
+    
   Template.feedList.isCurrentFeed = function(id) { return Session.get('feedId') === id; };
   Template.feedList.events({
       'click #googleImport': function() {
@@ -119,8 +124,7 @@ if (Meteor.isClient) {
           var feedId = $(event.target.parentElement).attr('id');
           var feedTitle = feeds.findOne({_id: feedId}).title;
           if(window.confirm("Really delete " + feedTitle + "?")) {
-              feeds.remove({_id: feedId, userId: Meteor.userId()});
-              articles.remove({feedId: feedId, userId: Metoer.userId()});
+              Meteor.call('deleteFeed', feedId);
           }
       }
   });
@@ -145,6 +149,7 @@ if (Meteor.isServer) {
   
   var articles = new Meteor.Collection('articles');
   var feeds = new Meteor.Collection('feeds');
+  var unreadCounts = new Meteor.Collection('unreadCounts');
 
   var ARTICLES_PER_PAGE = 50;
   
@@ -167,6 +172,10 @@ if (Meteor.isServer) {
       return articles.find(selectors, options);  
   });
     
+  Meteor.publish('unreadCounts', function() {
+    return unreadCounts.find({userId: this.userId});
+  });
+  
   Meteor.publish('feeds', function() {
       return feeds.find({userId: this.userId}, {fields: {feedId: 1, title: 1}});
   });
@@ -190,6 +199,7 @@ if (Meteor.isServer) {
           link: article.link,
           read: false,
         });
+        unreadCounts.update({feedId: feed._id, userId: feed.userId},{$inc: {count: 1}}, {upsert: true});
       }).run();
     };
   }
@@ -200,13 +210,19 @@ if (Meteor.isServer) {
   
   //Parses feed for newer articles
   var refreshFeed = function(feed) {
-      feedparser.parseUrl(feed.url).on('article', addArticle(feed))
-          .on('error', function(error) { console.log("ERROR refreshing feed " + feed.url + ":" + error); });
+      try {
+          feedparser.parseUrl(feed.url).on('article', addArticle(feed))
+              .on('error', function(error) { 
+                  //console.log("ERROR refreshing feed " + feed.url + ":" + error); 
+              });
+      } catch(e) {
+          //console.log("Invalid URL: " + feed.url);
+      }
   };
     
   //Called when metadata in a newly added feed is processed, gives information needed to add a new feed
   var addFeed = function(userId, url) {
-    console.log("Add for URL: " + url + " UserID: " + userId);
+    //console.log("Add for URL: " + url + " UserID: " + userId);
     //This way we pass the url into the callback as well
     return function(meta) {
         Fiber(function() {
@@ -228,10 +244,17 @@ if (Meteor.isServer) {
       'addFeed': function(url) {
           feedparser.parseUrl(url).on('meta', addFeed(this.userId, url));
       },
+      'deleteFeed': function(feedId) {
+          feeds.remove({_id: feedId, userId: this.userId});
+          articles.remove({feedId: feedId, userId: this.userId});
+      },
       'markAllRead': function(feedId) {              
           var selector = { read: {$ne: true}, userId: Meteor.userId() };
           if(feedId) { selector.feedId = feedId; }
           articles.update(selector, {$set: {read: true}}, {multi: true});
+          //Updating unread counts:
+          selector.read = undefined;
+          unreadCounts.update(selector,{$set: {count: 0}},{multi: true});
       },
       'importFromGoogleReader': function() {
           var accessToken = Meteor.user().services.google.accessToken;
@@ -241,7 +264,7 @@ if (Meteor.isServer) {
               function(err, result) {
                   for(var i=0;i<result.data.subscriptions.length; i++) {
                       var url = result.data.subscriptions[i].id.slice(5);
-                      console.log(url);
+                      //console.log(url);
                       addFeed(userId, url)(result.data.subscriptions[i]);     
                   }     
           });      
@@ -249,6 +272,7 @@ if (Meteor.isServer) {
   });
   
   Meteor.startup(function () {
-    // code to run on server at startup    
+    // code to run on server at startup   
+
   });
 }
