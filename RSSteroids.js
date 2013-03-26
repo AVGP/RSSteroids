@@ -1,28 +1,6 @@
 if (Meteor.isClient) {  
 //  Meteor.connect('http://neee.ws');
         
-  Meteor.Router.add({
-    '/': function() {
-        Session.set('feedId', undefined);
-        Session.set('page',0);
-        return 'timeline'
-    },
-    '/timeline/:name': function(name) {
-        var feed = feeds.findOne({title: name, userId: Meteor.userId()});
-        if(!feed) return 'timeline';
-        Session.set('feedId', feed._id);
-        return 'timeline';
-    },
-    '/article/:title': function(title) {
-        console.log(title);
-        var article = articles.findOne({title: decodeURIComponent(title), userId: Meteor.userId()});
-        articles.update({_id: article._id}, {'$set': {read: true}});
-//        if(!feed) return 'timeline'; //Go back to the overall timeline, b/c there's no article.
-        Session.set('article', article);
-        return 'article';        
-    }
-  });    
-
   Deps.autorun(function() {
       console.log(Session.get('feedId'));
       Meteor.subscribe('articles', {
@@ -37,7 +15,30 @@ if (Meteor.isClient) {
   });
   
   var articles = new Meteor.Collection("articles");
-  var feeds = new Meteor.Collection("feeds");
+  var feeds = new Meteor.Collection("feeds");        
+        
+  Meteor.Router.add({
+    '/': function() {
+        Session.set('feedId', undefined);
+        Session.set('page',0);
+        return 'timeline'
+    },
+    '/timeline/:name': function(name) {
+        var feed = feeds.findOne({title: name});
+        if(!feed) return 'timeline';
+        Session.set('page', 0);
+        Session.set('feedId', feed._id);
+        return 'timeline';
+    },
+    '/article/:title': function(title) {
+        console.log(title);
+        var article = articles.findOne({title: decodeURIComponent(title)});
+        articles.update({_id: article._id}, {'$set': {read: true}});
+//        if(!feed) return 'timeline'; //Go back to the overall timeline, b/c there's no article.
+        Session.set('article', article);
+        return 'article';        
+    }
+  });
   
   var refreshFeeds = function() {
       Meteor.setTimeout(refreshFeeds, 300000);
@@ -152,8 +153,7 @@ if (Meteor.isServer) {
       var options = {
           sort: [['read', 'asc'], ['date', 'desc']],
           limit: ARTICLES_PER_PAGE,
-          skip: (params.page || 0) * ARTICLES_PER_PAGE,
-          fields: {title: 1, read: 1, feedId: 1}
+          skip: (params.page || 0) * ARTICLES_PER_PAGE
       };
       if(params.feedId) { selectors.feedId = params.feedId; }
       if(params.searchPhrase) {
