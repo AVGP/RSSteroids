@@ -195,7 +195,7 @@ if (Meteor.isServer) {
   }
   
   var refreshFeeds = function () {
-//      feeds.find({userId: this.userId}).forEach(refreshFeed);
+      feeds.find({userId: this.userId}).forEach(refreshFeed);
   }
   
   //Parses feed for newer articles
