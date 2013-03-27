@@ -1,3 +1,29 @@
+//Common stuff
+var articles = new Meteor.Collection('articles');
+var getArticles = function(userId, params) {
+    var ARTICLES_PER_PAGE = 20;  
+    var selectors = { userId: userId };
+    var options = {
+        sort: [['read', 'asc'], ['date', 'desc'], ['_id', 'desc']],
+    };
+    if(Meteor.isClient) {
+        options.limit = ARTICLES_PER_PAGE;
+        options.skip = (params.page || 0) * ARTICLES_PER_PAGE;
+    }
+    if(params.feedId) { selectors.feedId = params.feedId; }
+    if(params.searchPhrase) {
+        var looseMatching = new RegExp('.*' + params.searchPhrase + '.*', 'ig');
+        selectors['$or'] = [
+            { title: looseMatching },
+            { content: looseMatching },
+            { summary: looseMatching }
+        ];
+    }
+      
+    return articles.find(selectors, options);
+}
+
+
 if (Meteor.isClient) {  
 //  Meteor.connect('http://neee.ws');
         
@@ -17,7 +43,6 @@ if (Meteor.isClient) {
       Meteor.subscribe('unreadCounts');
   });
     
-  var articles = new Meteor.Collection('articles');
   var feeds = new Meteor.Collection('feeds');      
   var unreadCounts = new Meteor.Collection('unreadCounts');
         
@@ -77,7 +102,10 @@ if (Meteor.isClient) {
   * Overall timeline
   **/
   Template.timeline.articles = function () {
-      return articles.find().map(function(article) {
+      return getArticles(Meteor.userId(), {
+          feedId: Session.get('feedId'),
+          searchPhrase: Session.get('searchPhrase')
+        }).map(function(article) {
           article.slug = encodeURIComponent(article.title);
           return article;
       });
@@ -147,29 +175,11 @@ if (Meteor.isClient) {
 
 if (Meteor.isServer) {
   
-  var articles = new Meteor.Collection('articles');
   var feeds = new Meteor.Collection('feeds');
   var unreadCounts = new Meteor.Collection('unreadCounts');
-
-  var ARTICLES_PER_PAGE = 50;
   
   Meteor.publish('articles', function(params) {
-      var selectors = { userId: this.userId };
-      var options = {
-          sort: [['read', 'asc'], ['date', 'desc']],
-          limit: ARTICLES_PER_PAGE,
-          skip: (params.page || 0) * ARTICLES_PER_PAGE
-      };
-      if(params.feedId) { selectors.feedId = params.feedId; }
-      if(params.searchPhrase) {
-          var looseMatching = new RegExp('.*' + params.searchPhrase + '.*', 'ig');
-          selectors['$or'] = [
-              { title: looseMatching },
-              { content: looseMatching },
-              { summary: looseMatching }
-          ];
-      }
-      return articles.find(selectors, options);  
+      return getArticles(this.userId, params);
   });
     
   Meteor.publish('unreadCounts', function() {
