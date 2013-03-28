@@ -18,6 +18,9 @@ var getArticles = function(userId, params) {
             { content: looseMatching },
             { summary: looseMatching }
         ];
+    } else {
+        options.limit = ARTICLES_PER_PAGE;
+        options.skip = (params.page || 0) * ARTICLES_PER_PAGE;  
     }
       
     return articles.find(selectors, options);
@@ -62,6 +65,9 @@ if (Meteor.isClient) {
     '/article/:title': function(title) {
         //console.log(title);
         var article = articles.findOne({title: decodeURIComponent(title)});
+        if(!article.read) {
+            Meteor.call("markOneArticleRead", article.feedId); 
+        }
         articles.update({_id: article._id}, {'$set': {read: true}});
 //        if(!feed) return 'timeline'; //Go back to the overall timeline, b/c there's no article.
         Session.set('article', article);
@@ -258,10 +264,13 @@ if (Meteor.isServer) {
           feeds.remove({_id: feedId, userId: this.userId});
           articles.remove({feedId: feedId, userId: this.userId});
       },
+      'markOneArticleRead': function(feedId) {
+          unreadCounts.update({feedId: feedId},{'$inc': {count: -1}});
+      },
       'markAllRead': function(feedId) {              
           var selector = { read: {$ne: true}, userId: Meteor.userId() };
           if(feedId) { selector.feedId = feedId; }
-          articles.update(selector, {$set: {read: true}}, {multi: true});
+          articles.update(selector, {'$set': {read: true}}, {multi: true});
           //Updating unread counts:
           selector.read = undefined;
           unreadCounts.update(selector,{$set: {count: 0}},{multi: true});
