@@ -9,6 +9,20 @@ body {
     background-size: cover;
 }
 
+h1, h2, h3 {
+    word-wrap:break-word;
+}
+
+pre {
+    white-space: pre-wrap;
+}
+
+.article-container {
+    font-family: 'PT Serif', serif;
+    text-overflow: ellipsis;
+    word-wrap: break-word;
+}
+
 #topbar {
     border: 1px rgb(162, 215, 236) solid;
     border-radius: 5px;

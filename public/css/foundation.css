@@ -1,3 +1,5 @@
+@import url(http://fonts.googleapis.com/css?family=PT+Serif:400,700);
+
 *,
 *:before,
 *:after {
@@ -998,13 +1000,16 @@ h1, h2, h3, h4, h5, h6 {
     line-height: 0; }
 
 h1 {
-  font-size: 2.125em; }
+  font-size: 2.125em;
+  font-family: 'PT Serif', serif; }
 
 h2 {
-  font-size: 1.6875em; }
+  font-size: 1.6875em;
+  font-family: 'PT Serif', serif; }
 
 h3 {
-  font-size: 1.375em; }
+  font-size: 1.375em;
+  font-family: 'PT Serif', serif; }
 
 h4 {
   font-size: 1.125em; }

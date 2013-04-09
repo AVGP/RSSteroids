@@ -44,7 +44,6 @@
 </template>
 
 <template name="feedList">
-    <h2>Feeds</h2>
     {{#unless feeds.length}}
         <button id="googleImport" class="button radius">Import from Google Reader</button>
     {{/unless}}
@@ -67,11 +66,11 @@
 </template>
 
 <template name="timeline">
-    <h2>Articles {{#if searchPhrase}}matching "{{searchPhrase}}"{{/if}}</h2>
+    {{#if searchPhrase}}<h2>Articles matching "{{searchPhrase}}"</h2>{{/if}}
     <div class="row">
         <button class="button radius" id="markAllRead">Mark all as read</button>
     </div>
-    <div class="row">
+    <div class="row article-container">
         <ul class="small-12 columns no-bullet">
           {{#each articles}}
             <li class="item{{#unless read}} unread{{/unless}}"><a href="/article/{{slug}}">{{title}}</a></li>
@@ -90,7 +89,7 @@
 
 <template name="article">
     <h2><a href="{{content.link}}">{{content.title}}</a></h2>
-    <div class="row">
+    <div class="row article-container">
         {{#if content.content}}
             <div class="small-12 columns">{{{content.content}}}</div>
         {{else}}
