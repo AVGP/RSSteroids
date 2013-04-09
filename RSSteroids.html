@@ -13,12 +13,13 @@
 
 <template name="main">
     {{#if currentUser}}
-      <div class="row">
-          <div class="right" id="topbar">
-              <input id="search" placeholder="search articles">
+      <div class="row topbar">
+          <div class="small-6 columns">
+              <img src="img/logo.png" alt="Neeews" />
+          </div>
+          <div class="small-6 columns">
               {{loginButtons}}
           </div>
-          <h1>Welcome {{userFirstname}}</h1>
       </div>
       <div class="row">
           <div class="small-4 columns">{{> feedList}}</div>
@@ -66,9 +67,13 @@
 </template>
 
 <template name="timeline">
-    {{#if searchPhrase}}<h2>Articles matching "{{searchPhrase}}"</h2>{{/if}}
     <div class="row">
-        <button class="button radius" id="markAllRead">Mark all as read</button>
+        <div class="small-4 columns">
+            <input id="search" class="neatInput" placeholder="search articles" />
+        </div>
+        <div class="small-offset-4 small-4 columns">
+            <a class="right shaded" href="#" id="markAllRead">Mark all as read</a>
+        </div>
     </div>
     <div class="row article-container">
         <ul class="small-12 columns no-bullet">

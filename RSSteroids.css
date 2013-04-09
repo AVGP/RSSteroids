@@ -17,15 +17,37 @@ pre {
     white-space: pre-wrap;
 }
 
+.right {
+    float: right;
+}
+
+.side-nav {
+    padding: 0 !important;
+}
+
 .article-container {
     text-overflow: ellipsis;
     word-wrap: break-word;
 }
 
-#topbar {
+.neat-input {
+    line-height: 30px;
+    height: 30px;
+    font-size: 0.8125em;
+    font-weight: bold;
+}
+
+.row .row.topbar {
+    margin-bottom: 8px;
+/*
     border: 1px rgb(162, 215, 236) solid;
     border-radius: 5px;
     padding: 2px;
+*/
+}
+
+.shaded {
+    border-bottom: rgb(162, 215, 236) 1px dotted;
 }
 
 .item {
@@ -47,4 +69,9 @@ pre {
     background: rgba(255,255,255, 0.75);
     padding: 2px 20px;
     box-shadow: rgb(162, 215, 236) 0px 0px 6px 2px;
+}
+
+
+#login-buttons {
+    float: right;
 }
