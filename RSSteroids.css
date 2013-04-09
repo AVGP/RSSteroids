@@ -18,7 +18,6 @@ pre {
 }
 
 .article-container {
-    font-family: 'PT Serif', serif;
     text-overflow: ellipsis;
     word-wrap: break-word;
 }
