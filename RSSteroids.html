@@ -8,7 +8,7 @@
 <body>
 
     <div class="row">
-        <div class="small-8 columns small-offset-2" id="wrap">{{> main}}</div>
+        <div class="small-10 large-8 columns small-offset-1 large-offset-2" id="wrap">{{> main}}</div>
     </div>
     <script type="text/javascript">
 
@@ -36,8 +36,8 @@
           </div>
       </div>
       <div class="row">
-          <div class="small-4 columns">{{> feedList}}</div>
-          <div class="small-8 columns">{{renderPage}}</div>
+          <div class="small-6 large-4 columns">{{> feedList}}</div>
+          <div class="small-6 large-8 columns">{{renderPage}}</div>
       </div>
     {{else}}
         <a href="https://github.com/you"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
@@ -82,10 +82,10 @@
 
 <template name="timeline">
     <div class="row">
-        <div class="small-4 columns">
+        <div class="large-4 columns">
             <input id="search" class="neatInput" placeholder="search articles" />
         </div>
-        <div class="small-offset-4 small-4 columns">
+        <div class="small-offset-4 large-4 columns">
             <a class="right shaded" href="#" id="markAllRead">Mark all as read</a>
         </div>
     </div>
