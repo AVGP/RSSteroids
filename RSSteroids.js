@@ -4,7 +4,7 @@ var getArticles = function(userId, params) {
     var ARTICLES_PER_PAGE = 20;  
     var selectors = { userId: userId };
     var options = {
-        sort: [['read', 'asc'], ['date', 'desc'], ['_id', 'desc']],
+        sort: [['read', 'asc'], ['date', 'desc'], ['_id', 'desc']]
     };
     if(Meteor.isClient) {
         options.limit = ARTICLES_PER_PAGE;
@@ -24,7 +24,7 @@ var getArticles = function(userId, params) {
     }
       
     return articles.find(selectors, options);
-}
+};
 
 
 if (Meteor.isClient) {  
@@ -53,7 +53,7 @@ if (Meteor.isClient) {
     '/': function() {
         Session.set('feedId', undefined);
         Session.set('page',0);
-        return 'timeline'
+        return 'timeline';
     },
     '/timeline/:name': function(name) {
         var feed = feeds.findOne({title: name});
@@ -143,7 +143,7 @@ if (Meteor.isClient) {
           feed.unreadCount = (unreadCount ? unreadCount.count : 'n/a');
           return feed;
       });
-  }
+  };
     
   Template.feedList.isCurrentFeed = function(id) { return Session.get('feedId') === id; };
   Template.feedList.events({
@@ -169,7 +169,7 @@ if (Meteor.isClient) {
   
   Template.article.content = function() {
       return Session.get('article');
-  }
+  };
 }
 
 /**
@@ -213,16 +213,16 @@ if (Meteor.isServer) {
           guid: article.guid,
           date: article.date,
           link: article.link,
-          read: false,
+          read: false
         });
         unreadCounts.update({feedId: feed._id, userId: feed.userId},{$inc: {count: 1}}, {upsert: true});
       }).run();
     };
-  }
+  };
   
   var refreshFeeds = function () {
       feeds.find({userId: this.userId}).forEach(refreshFeed);
-  }
+  };
   
   //Parses feed for newer articles
   var refreshFeed = function(feed) {
