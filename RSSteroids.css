@@ -1,3 +1,4 @@
+@import url(http://fonts.googleapis.com/css?family=Libre+Baskerville:400,700);
 
 [class*="fontawesome-"]:before {
   font-family: 'FontAwesome', sans-serif;
@@ -11,6 +12,7 @@ body {
 
 h1, h2, h3 {
     word-wrap:break-word;
+    font-family: 'Libre Baskerville', serif !important;
 }
 
 pre {
@@ -28,11 +30,21 @@ pre {
 .article-container {
     text-overflow: ellipsis;
     word-wrap: break-word;
+    font-family: 'Libre Baskerville', serif;
+    padding-top: 8px;
+}
+
+.box {
+    padding-top: 1.76em;
+}
+
+.no-padding {
+    padding: 0 !important;
 }
 
 .neat-input {
     line-height: 30px;
-    height: 30px;
+    height: 30px !important;
     font-size: 0.8125em;
     font-weight: bold;
 }
