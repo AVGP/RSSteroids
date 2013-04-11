@@ -87,3 +87,7 @@ pre {
 #login-buttons {
     float: right;
 }
+
+.text-center #login-buttons {
+    float: none;
+}
