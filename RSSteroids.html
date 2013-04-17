@@ -2,7 +2,9 @@
   <title>Neee.ws - Your newsreader</title>
   <link rel="stylesheet" href="http://weloveiconfonts.com/api/?family=fontawesome" type="text/css" />
   <link rel="stylesheet" href="/css/foundation.css" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />  
+  <link rel="stylesheet" href="/css/responsive-nav.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="/js/responsive-nav.js"></script>
 </head>
 
 <body>
@@ -16,13 +18,13 @@
       _gaq.push(['_setAccount', 'UA-30023200-1']);
       _gaq.push(['_setDomainName', 'neee.ws']);
       _gaq.push(['_trackPageview']);
-    
+
       (function() {
         var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
         ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
-    </script>    
+    </script>
 </body>
 
 <template name="main">
@@ -36,8 +38,9 @@
           </div>
       </div>
       <div class="row">
-          <div class="small-6 large-4 columns">{{> feedList}}</div>
-          <div class="small-6 large-8 columns">{{renderPage}}</div>
+          <button id="nav-toggle" class="button small radius"><span class="fontawesome-list fontawesome-large"></span> List of feeds</button>
+          <div id="nav" class="small-6 large-4 columns">{{> feedList}}</div>
+          <div id="mainContainer" class="small-12 large-8 columns">{{renderPage}}</div>
       </div>
     {{else}}
         <a href="https://github.com/you"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
@@ -83,7 +86,7 @@
 <template name="timeline">
     <h2>{{#if feedName}}{{feedName}}{{else}}All feeds{{/if}}</h2>
     <div class="row">
-        <div class="large-4 columns">
+        <div class="large-4 small-12 columns">
             <input id="search" class="neatInput" placeholder="search articles" />
         </div>
         <div class="small-offset-4 large-4 columns">
@@ -113,7 +116,7 @@
         {{#if content.content}}
             <div class="small-12 columns">{{{content.content}}}</div>
         {{else}}
-            <div class="small-12 columns">{{{content.summary}}}</div>        
+            <div class="small-12 columns">{{{content.summary}}}</div>
         {{/if}}
     </div>
 </template>

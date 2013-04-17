@@ -1,7 +1,7 @@
 //Common stuff
 var articles = new Meteor.Collection('articles');
 var getArticles = function(userId, params) {
-    var ARTICLES_PER_PAGE = 20;  
+    var ARTICLES_PER_PAGE = 20;
     var selectors = { userId: userId };
     var options = {
         sort: [['read', 'asc'], ['date', 'desc'], ['_id', 'desc']]
@@ -20,16 +20,16 @@ var getArticles = function(userId, params) {
         ];
     } else {
         options.limit = ARTICLES_PER_PAGE;
-        options.skip = (params.page || 0) * ARTICLES_PER_PAGE;  
+        options.skip = (params.page || 0) * ARTICLES_PER_PAGE;
     }
-      
+
     return articles.find(selectors, options);
 };
 
 
-if (Meteor.isClient) {  
+if (Meteor.isClient) {
 //  Meteor.connect('http://neee.ws');
-        
+
   Deps.autorun(function() {
       Meteor.subscribe('articles', {
           feedId: Session.get('feedId'),
@@ -37,18 +37,18 @@ if (Meteor.isClient) {
           searchPhrase: Session.get('searchPhrase')
       });
   });
-  
+
   Deps.autorun(function() {
       Meteor.subscribe('feeds');
   });
-  
+
   Deps.autorun(function() {
       Meteor.subscribe('unreadCounts');
   });
-    
-  var feeds = new Meteor.Collection('feeds');      
+
+  var feeds = new Meteor.Collection('feeds');
   var unreadCounts = new Meteor.Collection('unreadCounts');
-        
+
   Meteor.Router.add({
     '/': function() {
         Session.set('feedId', undefined);
@@ -68,22 +68,22 @@ if (Meteor.isClient) {
         //console.log(title);
         var article = articles.findOne({title: decodeURIComponent(title)});
         if(!article.read) {
-            Meteor.call("markOneArticleRead", article.feedId); 
+            Meteor.call("markOneArticleRead", article.feedId);
         }
         articles.update({_id: article._id}, {'$set': {read: true}});
 //        if(!feed) return 'timeline'; //Go back to the overall timeline, b/c there's no article.
         Session.set('article', article);
-        return 'article';        
+        return 'article';
     }
   });
-  
+
   var refreshFeeds = function() {
       Meteor.setTimeout(refreshFeeds, 300000);
       if(Meteor.userId()) {
           Meteor.call("refreshFeeds");
       }
   };
-  
+
   Meteor.startup(function() {
       Meteor.setTimeout(refreshFeeds, 0);
       Accounts.ui.config({
@@ -92,19 +92,32 @@ if (Meteor.isClient) {
           }
       });
   });
-      
+
   /**
   * Global main template
   **/
 
   Template.main.userFirstname = function() {
       return Meteor.user().profile.name.split(' ')[0];
-  };  
+  };
+
+  Template.main.rendered = function() {
+      console.log("RENDERED");
+      var nav = responsiveNav("#nav", {
+          customToggle: "#nav-toggle",
+          insert: "before",
+          open: function(){
+              console.log("OPENED");
+              $("#nav").toggleClass("small-12").toggleClass("small-6");
+          }, close: function(){
+              $("#nav").toggleClass("small-6").toggleClass("small-12");
+          }});
+  }
 
   Template.main.events({
       'keyup #search': function() {
           Session.set('searchPhrase', $('#search').val());
-      }      
+      }
   });
   /**
   * Overall timeline
@@ -122,7 +135,7 @@ if (Meteor.isClient) {
   Template.timeline.feedName = function() { return Session.get('feedName'); };
   Template.timeline.page = function() { return Session.get('page'); };
   Template.timeline.searchPhrase = function() { return Session.get('searchPhrase'); };
-    
+
   Template.timeline.events({
       'click #markAllRead': function() {
           Meteor.call('markAllRead', Session.get('feedId'));
@@ -133,9 +146,9 @@ if (Meteor.isClient) {
       'click #prevPage': function() {
           Session.set('page', Math.max(Session.get('page')-1, 0));
       }
-      
+
   });
-  
+
   /**
   * The list of feeds (aside)
   **/
@@ -147,11 +160,11 @@ if (Meteor.isClient) {
           return feed;
       });
   };
-    
+
   Template.feedList.isCurrentFeed = function(id) { return Session.get('feedId') === id; };
   Template.feedList.events({
       'click #googleImport': function() {
-          Meteor.call('importFromGoogleReader');  
+          Meteor.call('importFromGoogleReader');
       },
       'click #addFeed': function() {
           Meteor.call('addFeed', $('#feedurl').val());
@@ -165,11 +178,11 @@ if (Meteor.isClient) {
           }
       }
   });
-  
+
   /**
   * Detail for an article
   **/
-  
+
   Template.article.content = function() {
       return Session.get('article');
   };
@@ -183,34 +196,34 @@ if (Meteor.isClient) {
 
 
 if (Meteor.isServer) {
-  
+
   var feeds = new Meteor.Collection('feeds');
   var unreadCounts = new Meteor.Collection('unreadCounts');
-  
+
   Meteor.publish('articles', function(params) {
       return getArticles(this.userId, params);
   });
-    
+
   Meteor.publish('unreadCounts', function() {
     return unreadCounts.find({userId: this.userId});
   });
-  
+
   Meteor.publish('feeds', function() {
       return feeds.find({userId: this.userId}, {fields: {feedId: 1, title: 1}});
   });
-  
-  var require = __meteor_bootstrap__.require;    
+
+  var require = __meteor_bootstrap__.require;
   var feedparser = require('feedparser');
-  
+
   var addArticle = function(feed) {
     //This way we pass the feed into the callback
     return function(article) {
       Fiber(function() {
-        if(articles.findOne({feedId: feed._id, guid: article.guid})) return false;      
+        if(articles.findOne({feedId: feed._id, guid: article.guid})) return false;
         articles.insert({
           feedId: feed._id,
           userId: feed.userId,
-          title: article.title, 
+          title: article.title,
           summary: article.summary,
           content: article.description,
           guid: article.guid,
@@ -222,23 +235,23 @@ if (Meteor.isServer) {
       }).run();
     };
   };
-  
+
   var refreshFeeds = function () {
       feeds.find({userId: this.userId}).forEach(refreshFeed);
   };
-  
+
   //Parses feed for newer articles
   var refreshFeed = function(feed) {
       try {
           feedparser.parseUrl(feed.url).on('article', addArticle(feed))
-              .on('error', function(error) { 
-                  //console.log("ERROR refreshing feed " + feed.url + ":" + error); 
+              .on('error', function(error) {
+                  //console.log("ERROR refreshing feed " + feed.url + ":" + error);
               });
       } catch(e) {
           //console.log("Invalid URL: " + feed.url);
       }
   };
-    
+
   //Called when metadata in a newly added feed is processed, gives information needed to add a new feed
   var addFeed = function(userId, url) {
     //console.log("Add for URL: " + url + " UserID: " + userId);
@@ -257,7 +270,7 @@ if (Meteor.isServer) {
         }).run();
     };
   };
-  
+
   Meteor.methods({
       'refreshFeeds': refreshFeeds,
       'addFeed': function(url) {
@@ -270,7 +283,7 @@ if (Meteor.isServer) {
       'markOneArticleRead': function(feedId) {
           unreadCounts.update({feedId: feedId},{'$inc': {count: -1}});
       },
-      'markAllRead': function(feedId) {              
+      'markAllRead': function(feedId) {
           var selector = { read: {$ne: true}, userId: Meteor.userId() };
           if(feedId) { selector.feedId = feedId; }
           articles.update(selector, {'$set': {read: true}}, {multi: true});
@@ -282,19 +295,19 @@ if (Meteor.isServer) {
           var accessToken = Meteor.user().services.google.accessToken;
           var userId = Meteor.userId();
           Meteor.http.get("https://www.google.com/reader/api/0/subscription/list?output=json",
-              { headers: { Authorization: "Bearer " + accessToken } }, 
+              { headers: { Authorization: "Bearer " + accessToken } },
               function(err, result) {
                   for(var i=0;i<result.data.subscriptions.length; i++) {
                       var url = result.data.subscriptions[i].id.slice(5);
                       //console.log(url);
-                      addFeed(userId, url)(result.data.subscriptions[i]);     
-                  }     
-          });      
+                      addFeed(userId, url)(result.data.subscriptions[i]);
+                  }
+          });
       }
   });
-  
+
   Meteor.startup(function () {
-    // code to run on server at startup   
+    // code to run on server at startup
 
   });
 }

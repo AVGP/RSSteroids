@@ -1,4 +1,5 @@
 @import url(http://fonts.googleapis.com/css?family=Libre+Baskerville:400,700);
+@import url(http://weloveiconfonts.com/api/?family=fontawesome);
 
 [class*="fontawesome-"]:before {
   font-family: 'FontAwesome', sans-serif;
@@ -88,6 +89,9 @@ pre {
     box-shadow: rgb(162, 215, 236) 0px 0px 6px 2px;
 }
 
+#nav-toggle {
+    margin-left: 14px;
+}
 
 #login-buttons {
     float: right;
