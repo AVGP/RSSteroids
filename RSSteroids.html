@@ -81,6 +81,7 @@
 </template>
 
 <template name="timeline">
+    <h2>{{#if feedName}}{{feedName}}{{else}}All feeds{{/if}}</h2>
     <div class="row">
         <div class="large-4 columns">
             <input id="search" class="neatInput" placeholder="search articles" />

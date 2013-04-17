@@ -53,12 +53,14 @@ if (Meteor.isClient) {
     '/': function() {
         Session.set('feedId', undefined);
         Session.set('page',0);
+        Session.set('feedName', null);
         return 'timeline';
     },
     '/timeline/:name': function(name) {
         var feed = feeds.findOne({title: name});
         if(!feed) return 'timeline';
         Session.set('page', 0);
+        Session.set('feedName', name);
         Session.set('feedId', feed._id);
         return 'timeline';
     },
@@ -116,7 +118,8 @@ if (Meteor.isClient) {
           return article;
       });
   };
-    
+
+  Template.timeline.feedName = function() { return Session.get('feedName'); };
   Template.timeline.page = function() { return Session.get('page'); };
   Template.timeline.searchPhrase = function() { return Session.get('searchPhrase'); };
     
