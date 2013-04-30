@@ -102,12 +102,10 @@ if (Meteor.isClient) {
   };
 
   Template.main.rendered = function() {
-      console.log("RENDERED");
       var nav = responsiveNav("#nav", {
           customToggle: "#nav-toggle",
           insert: "before",
           open: function(){
-              console.log("OPENED");
               $("#nav").toggleClass("small-12").toggleClass("small-6");
           }, close: function(){
               $("#nav").toggleClass("small-6").toggleClass("small-12");
