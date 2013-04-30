@@ -9,6 +9,13 @@ body {
     background-image: url(/img/light.jpg);
     background-attachment: fixed;
     background-size: cover;
+    color: #000;
+    font-family: Helvetica, Arial, sans-serif;
+}
+
+a, a:visited, a:hover {
+    color: #2285A2 !important;
+    text-decoration:none !important;
 }
 
 h1, h2, h3 {
@@ -16,56 +23,22 @@ h1, h2, h3 {
     font-family: 'Libre Baskerville', serif !important;
 }
 
-h2 {
-    margin-top: 0 !important;
-    line-height: 1.0 !important;
-}
-
 pre {
     white-space: pre-wrap;
 }
 
-.right {
-    float: right;
-}
-
-.side-nav {
-    padding: 0 !important;
-}
-
 .article-container {
     text-overflow: ellipsis;
+    text-align:justify;
     word-wrap: break-word;
     font-family: 'Libre Baskerville', serif;
     padding-top: 8px;
 }
 
-.box {
-    padding-top: 1.76em;
-}
-
-.no-padding {
-    padding: 0 !important;
-}
-
-.neat-input {
-    line-height: 30px;
-    height: 30px !important;
-    font-size: 0.8125em;
-    font-weight: bold;
-}
-
-.row .row.topbar {
-    margin-bottom: 8px;
-/*
-    border: 1px rgb(162, 215, 236) solid;
-    border-radius: 5px;
-    padding: 2px;
-*/
-}
-
-.shaded {
-    border-bottom: rgb(162, 215, 236) 1px dotted;
+.no-bullets {
+    list-style: none;
+    padding-left: 0;
+    margin-left: 0;
 }
 
 .item {
@@ -75,28 +48,36 @@ pre {
 
 .unread { font-weight: bold; }
 
-.item:hover, li.active {
-    background-color: rgba(230,240,255,0.5);
+.neat-input {
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
-.side-nav li a.delete { display: none; }
-.side-nav li:hover a.delete { display:inline !important; float:right; }
-
-#wrap {
-    background: rgb(255,255,255);
-    background: rgba(255,255,255, 0.75);
-    padding: 2px 20px;
-    box-shadow: rgb(162, 215, 236) 0px 0px 6px 2px;
-}
-
-#nav-toggle {
-    margin-left: 14px;
-}
-
-#login-buttons {
+.right {
     float: right;
 }
 
-.text-center #login-buttons {
-    float: none;
+.delete {
+    display: none;
+}
+
+li:hover .delete {
+    display: block;
+}
+
+.centered {
+    text-align: center;
+}
+
+li:hover, li.active {
+    background-color: rgba(230,240,255,0.5);
+}
+
+.wrap {
+    width: 95%;
+    margin: 0px auto;
+/*    background: rgb(255,255,255);*/
+    background: rgba(255,255,255, 0.75);
+    padding: 2px 20px;
+    box-shadow: rgb(162, 215, 236) 0px 0px 6px 2px;    
 }
