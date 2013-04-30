@@ -20,6 +20,7 @@ a, a:visited, a:hover {
 
 h1, h2, h3 {
     word-wrap:break-word;
+    padding-top: 0;
     font-family: 'Libre Baskerville', serif !important;
 }
 
