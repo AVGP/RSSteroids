@@ -1,7 +1,7 @@
 <head>
   <title>Neee.ws - Your newsreader</title>
   <link rel="stylesheet" href="http://weloveiconfonts.com/api/?family=fontawesome" type="text/css" />
-  <link rel="stylesheet" href="/css/foundation.css" />
+  <link rel="stylesheet" href="/css/ink.css" />
   <link rel="stylesheet" href="/css/responsive-nav.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script src="/js/responsive-nav.js"></script>
@@ -9,8 +9,8 @@
 
 <body>
 
-    <div class="row">
-        <div class="small-10 large-8 columns small-offset-1 large-offset-2" id="wrap">{{> main}}</div>
+    <div class="ink-container wrap">
+        {{> main}}
     </div>
     <script type="text/javascript">
 
@@ -29,19 +29,14 @@
 
 <template name="main">
     {{#if currentUser}}
-      <div class="row topbar">
-          <div class="small-6 columns">
-              <img src="/img/logo.png" alt="Neeews" />
-          </div>
-          <div class="small-6 columns">
-              {{loginButtons}}
-          </div>
+      <div class="ink-l100">
+          <img src="/img/logo.png" alt="Neeews" />
+          <div class="right">{{loginButtons}}</div>
       </div>
-      <div class="row">
-          <button id="nav-toggle" class="button small radius"><span class="fontawesome-list fontawesome-large"></span> List of feeds</button>
-          <div id="nav" class="small-6 large-4 columns">{{> feedList}}</div>
-          <div id="mainContainer" class="small-12 large-8 columns">{{renderPage}}</div>
-      </div>
+      <button id="nav-toggle" class="button small radius"><span class="fontawesome-list fontawesome-large"></span> List of feeds</button>
+      <div id="nav" class="ink-l25">{{> feedList}}</div>
+      <div id="mainContainer" class="ink-l75">{{renderPage}}</div>
+      
     {{else}}
         <a href="https://github.com/you"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
         <div class="row">
@@ -49,14 +44,9 @@
             <h2>The juicy Newsreader</h2>
             <p>Getting started is easy & it's free!</p>
         </div>
-        <div class="row">
+        <div class="">
             <p class="text-center">{{loginButtons}}</p>
             <p>to start & import your Google Reader subscriptions with one click!</p>
-        </div>
-        <div class="row text-center">
-            <a href="http://flattr.com/thing/1197278/Neeews" target="_blank">
-                <img src="http://api.flattr.com/button/flattr-badge-large.png" alt="Flattr this" title="Flattr this" border="0" />
-            </a>
         </div>
     {{/if}}
 </template>
@@ -64,59 +54,55 @@
 <template name="feedList">
     {{#unless feeds.length}}
         <button id="googleImport" class="button radius">Import from Google Reader</button>
-    {{/unless}}
-    <ul class="side-nav row">
+    {{/unless}}    
+    <ul class="side-nav">
       <li {{#if isCurrentFeed undefined}}class="active"{{/if}}><a href="/">All feeds</a></li>
       {{#each feeds}}
         <li {{#if isCurrentFeed _id}}class="active"{{/if}}>
-            <a href="javascript:void(0)" id="{{_id}}" class="delete"><span class="fontawesome-trash"></span></a>
+            <a href="javascript:void(0)" id="{{_id}}" class="delete right"><span class="fontawesome-trash"></span></a>
             <a href="/timeline/{{title}}">{{title}} ({{unreadCount _id}})</a>
         </li>
       {{/each}}
     </ul>
-    <div class="box row">
-        <div class="large-8 columns no-padding"><input type="url" class="neat-input" id="feedurl" placeholder="http://" /></div>
-        <div class="large-4 columns"><button id="addFeed" class="button small radius">Add</button></div>
+    <div class="">
+        <input type="url" class="neat-input" id="feedurl" placeholder="http://" />
+        <button id="addFeed" class="">Add</button>
     </div>
-    <div class="row">
+    <div style="margin-top: 8px" class="centered">
         <a href="http://flattr.com/thing/1197278/Neeews" target="_blank"><img src="http://api.flattr.com/button/flattr-badge-large.png" alt="Flattr this" title="Flattr this" border="0" /></a>
     </div>
 </template>
 
 <template name="timeline">
     <h2>{{#if feedName}}{{feedName}}{{else}}All feeds{{/if}}</h2>
-    <div class="row">
-        <div class="large-4 small-12 columns">
-            <input id="search" class="neatInput" placeholder="search articles" />
-        </div>
-        <div class="small-offset-4 large-4 columns">
-            <a class="right shaded" href="#" id="markAllRead">Mark all as read</a>
+    <div class="">
+        <div class="">
+            <input id="search" class="" placeholder="search articles" />
+            <button class="right" type="button" id="markAllRead">Mark all as read</button>
         </div>
     </div>
-    <div class="row article-container">
-        <ul class="small-12 columns no-bullet">
+    <div class="article-container">
+        <ul class="no-bullets">
           {{#each articles}}
             <li class="item{{#unless read}} unread{{/unless}}"><a href="/article/{{slug}}">{{title}}</a></li>
           {{/each}}
         </ul>
     </div>
-    <div class="row">
-        <div class="small-6 columns small-centered text-center">
-            {{#if page}}
-                <a href="javascript:void(0);" id="prevPage"><span class="fontawesome-double-angle-left"></span> Newer</a> |
-            {{/if}}
-            <a href="javascript:void(0);" id="nextPage">Older <span class="fontawesome-double-angle-right"></span></a>
-        </div>
+    <div class="centered">
+        {{#if page}}
+            <a href="javascript:void(0);" id="prevPage"><span class="fontawesome-double-angle-left"></span> Newer</a> |
+        {{/if}}
+        <a href="javascript:void(0);" id="nextPage">Older <span class="fontawesome-double-angle-right"></span></a>
     </div>
 </template>
 
 <template name="article">
     <h2><a href="{{content.link}}">{{content.title}}</a></h2>
-    <div class="row article-container">
+    <div class="article-container">
         {{#if content.content}}
-            <div class="small-12 columns">{{{content.content}}}</div>
+            <div class="">{{{content.content}}}</div>
         {{else}}
-            <div class="small-12 columns">{{{content.summary}}}</div>
+            <div class="">{{{content.summary}}}</div>
         {{/if}}
     </div>
 </template>
