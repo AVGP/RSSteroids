@@ -47,6 +47,11 @@ pre {
     border-bottom: rgb(162, 215, 236) 1px dotted;
 }
 
+.active {
+    background-color: rgba(230,240,255,0.5);
+    font-weight: bold;
+}
+
 .unread { font-weight: bold; }
 
 .neat-input {
@@ -66,12 +71,12 @@ li:hover .delete {
     display: block;
 }
 
-.centered {
-    text-align: center;
+li:hover {
+    background-color: rgba(230,240,255,0.5);
 }
 
-li:hover, li.active {
-    background-color: rgba(230,240,255,0.5);
+.centered {
+    text-align: center;
 }
 
 .wrap {
