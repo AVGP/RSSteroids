@@ -26,10 +26,9 @@ var getArticles = function(userId, params) {
     return articles.find(selectors, options);
 };
 
-
 if (Meteor.isClient) {
 //  Meteor.connect('http://neee.ws');
-
+  
   Deps.autorun(function() {
       Meteor.subscribe('articles', {
           feedId: Session.get('feedId'),
@@ -195,6 +194,8 @@ if (Meteor.isClient) {
 
 if (Meteor.isServer) {
 
+  Meteor.AppCache.config({firefox: true});  
+  
   var feeds = new Meteor.Collection('feeds');
   var unreadCounts = new Meteor.Collection('unreadCounts');
 
