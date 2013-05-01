@@ -1,9 +1,16 @@
+/**
+* Fonts
+**/
 @import url(http://fonts.googleapis.com/css?family=Libre+Baskerville:400,700);
 @import url(http://weloveiconfonts.com/api/?family=fontawesome);
 
 [class*="fontawesome-"]:before {
   font-family: 'FontAwesome', sans-serif;
 }
+
+/**
+* Element styles
+**/
 
 body {
     background-image: url(/img/light.jpg);
@@ -27,6 +34,32 @@ h1, h2, h3 {
 pre {
     white-space: pre-wrap;
 }
+
+/** This style is taken from the Foundation 4 defaults **/
+button, .login-button {
+    background: #30BCE6 !important;/*#2ba6cb;*/
+    border: solid 1px #2285A2 !important;/*#2284a1;*/
+    border-radius: 3px !important;
+    color: #fff !important;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset !important;
+    text-shadow: 1px 1px #333 !important;
+    -webkit-transition: background-color 300ms ease-out !important;
+    -moz-transition: background-color 300ms ease-out !important;
+    transition: background-color 300ms ease-out !important;
+}
+
+button:hover, .login-button:hover {
+    background: #2285A2 !important;
+    border: solid 1px #155466 !important;
+    border-radius: 3px !important;
+    color: #fff !important;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset !important;
+    text-shadow: 1px 1px #333 !important;    
+}
+
+/**
+* Classes
+**/
 
 .article-container {
     text-overflow: ellipsis;
