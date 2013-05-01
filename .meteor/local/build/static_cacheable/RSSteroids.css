@@ -1,0 +1,127 @@
+/**
+* Fonts
+**/
+@import url(http://fonts.googleapis.com/css?family=Libre+Baskerville:400,700);
+@import url(http://weloveiconfonts.com/api/?family=fontawesome);
+
+[class*="fontawesome-"]:before {
+  font-family: 'FontAwesome', sans-serif;
+}
+
+/**
+* Element styles
+**/
+
+body {
+    background-image: url(/img/light.jpg);
+    background-attachment: fixed;
+    background-size: cover;
+    color: #000;
+    font-family: Helvetica, Arial, sans-serif;
+}
+
+a, a:visited {
+    color: #2285A2 !important;
+    text-decoration:none !important;
+}
+
+a:hover {
+    color: #25A5C6 !important;
+    text-decoration:none !important;
+}
+
+h1, h2, h3 {
+    word-wrap:break-word;
+    padding-top: 0 !important;
+    font-family: 'Libre Baskerville', serif !important;
+}
+
+pre {
+    white-space: pre-wrap;
+}
+
+/** This style is taken from the Foundation 4 defaults **/
+button, .login-button {
+    background: #30BCE6 !important;/*#2ba6cb;*/
+    border: solid 1px #2285A2 !important;/*#2284a1;*/
+    border-radius: 3px !important;
+    color: #fff !important;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset !important;
+    text-shadow: 1px 1px #333 !important;
+    -webkit-transition: background-color 300ms ease-out !important;
+    -moz-transition: background-color 300ms ease-out !important;
+    transition: background-color 300ms ease-out !important;
+}
+
+button:hover, .login-button:hover {
+    background: #2285A2 !important;
+    border: solid 1px #155466 !important;
+    border-radius: 3px !important;
+    color: #fff !important;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset !important;
+    text-shadow: 1px 1px #333 !important;    
+}
+
+/**
+* Classes
+**/
+
+.article-container {
+    text-overflow: ellipsis;
+    text-align:justify;
+    word-wrap: break-word;
+    font-family: 'Libre Baskerville', serif;
+    padding-top: 8px;
+}
+
+.no-bullets {
+    list-style: none;
+    padding-left: 0;
+    margin-left: 0;
+}
+
+.item {
+    padding-bottom: 8px;
+    border-bottom: rgb(162, 215, 236) 1px dotted;
+}
+
+.active {
+    background-color: rgba(230,240,255,0.5);
+    font-weight: bold;
+}
+
+.unread { font-weight: bold; }
+
+.neat-input {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.right {
+    float: right;
+}
+
+.delete {
+    display: none;
+}
+
+li:hover .delete {
+    display: block;
+}
+
+li:hover {
+    background-color: rgba(230,240,255,0.5);
+}
+
+.centered {
+    text-align: center;
+}
+
+.wrap {
+    width: 95%;
+    margin: 0px auto;
+/*    background: rgb(255,255,255);*/
+    background: rgba(255,255,255, 0.75);
+    padding: 2px 20px;
+    box-shadow: rgb(162, 215, 236) 0px 0px 6px 2px;    
+}
