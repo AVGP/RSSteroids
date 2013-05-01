@@ -20,8 +20,13 @@ body {
     font-family: Helvetica, Arial, sans-serif;
 }
 
-a, a:visited, a:hover {
+a, a:visited {
     color: #2285A2 !important;
+    text-decoration:none !important;
+}
+
+a:hover {
+    color: #25A5C6 !important;
     text-decoration:none !important;
 }
 
