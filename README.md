@@ -2,7 +2,7 @@ RSSteroids
 ======
 
 Meteor.js based RSS reader. Responsive. Reactive. Juicy.
-[See a hosted version](http://www.neee.ws)
+
 
 ## Installation
 To install RSSteroids, you need the following installed:
